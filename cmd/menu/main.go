@@ -8,8 +8,8 @@ import (
 	"strings"
 
 	"github.com/asdine/storm"
-	"github.com/tomsteele/emptynest"
-	"github.com/tomsteele/emptynest/stager"
+	"github.com/empty-nest/server"
+	"github.com/empty-nest/server/stager"
 )
 
 func checkAndPanic(err error) {

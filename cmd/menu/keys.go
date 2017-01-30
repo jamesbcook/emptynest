@@ -4,7 +4,7 @@ import (
 	"encoding/hex"
 	"fmt"
 
-	"github.com/tomsteele/emptynest"
+	"github.com/empty-nest/server"
 )
 
 func (m *menu) keys(args []string) {

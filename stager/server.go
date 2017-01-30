@@ -11,8 +11,8 @@ import (
 
 	"github.com/asdine/storm"
 	"github.com/asdine/storm/q"
-	emptynest "github.com/tomsteele/emptynest"
-	"github.com/tomsteele/emptynest/crypter"
+	emptynest "github.com/empty-nest/server"
+	"github.com/empty-nest/server/crypter"
 )
 
 // ApprovalRequest ...
