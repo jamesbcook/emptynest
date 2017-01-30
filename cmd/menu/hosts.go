@@ -4,7 +4,7 @@ import (
 	"fmt"
 	"strconv"
 
-	"github.com/tomsteele/emptynest"
+	"github.com/empty-nest/server"
 )
 
 func (m *menu) hosts(args []string) {

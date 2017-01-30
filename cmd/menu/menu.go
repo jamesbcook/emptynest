@@ -2,7 +2,7 @@ package main
 
 import (
 	"github.com/asdine/storm"
-	"github.com/tomsteele/emptynest"
+	"github.com/empty-nest/server"
 )
 
 type menu struct {
