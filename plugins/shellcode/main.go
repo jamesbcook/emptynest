@@ -29,8 +29,13 @@ func String(data []byte) string {
 	return fmt.Sprintf("%x", data)
 }
 
-// Generate generates a payload based on the arguments provided
-func Generate(args []string) ([]byte, error) {
+// Generate ...
+func Generate(data []byte) ([]byte, error) {
+	return data, nil
+}
+
+// Process prepares a payload based on the arguments provided
+func Process(args []string) ([]byte, error) {
 	var shellcode []byte
 	if len(args) < 1 {
 		return shellcode, errors.New("missing required arguments")

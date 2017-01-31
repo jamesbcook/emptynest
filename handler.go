@@ -61,6 +61,7 @@ func (s *Server) Handle(w http.ResponseWriter, r *http.Request) {
 	}
 	if payload == "" || err != nil {
 		http.NotFound(w, r)
+		return
 	}
 
 	data := []byte(payload)
@@ -69,6 +70,7 @@ func (s *Server) Handle(w http.ResponseWriter, r *http.Request) {
 		data, err = encoder.Decode(data)
 		if err != nil {
 			http.NotFound(w, r)
+			s.debug(err.Error())
 			return
 		}
 	}
@@ -82,6 +84,7 @@ func (s *Server) Handle(w http.ResponseWriter, r *http.Request) {
 		s.debug("Decrypting with " + crypter.Name())
 		data, err = crypter.Open(key, data)
 		if err != nil {
+			s.debug(err.Error())
 			http.NotFound(w, r)
 			return
 		}
@@ -89,6 +92,7 @@ func (s *Server) Handle(w http.ResponseWriter, r *http.Request) {
 	parts := bytes.Split(data, s.HostInfo.SplitPattern())
 	argLength := s.HostInfo.ArgLength()
 	if len(parts) < argLength {
+		s.debug("incorrect info length")
 		http.NotFound(w, r)
 		return
 	}
@@ -116,6 +120,7 @@ func (s *Server) Handle(w http.ResponseWriter, r *http.Request) {
 	}
 	response, err := approvalResponse.Plugin.Generate(approvalResponse.Payload.Data)
 	if err != nil {
+		s.debug(err.Error())
 		http.NotFound(w, r)
 		return
 	}
@@ -128,6 +133,7 @@ func (s *Server) Handle(w http.ResponseWriter, r *http.Request) {
 		s.debug("Encrypting with " + crypter.Name())
 		response, err = crypter.Seal(key, response)
 		if err != nil {
+			s.debug(err.Error())
 			http.NotFound(w, r)
 			return
 		}
@@ -137,6 +143,7 @@ func (s *Server) Handle(w http.ResponseWriter, r *http.Request) {
 		s.debug("Encoding with " + encoder.Name())
 		response, err = encoder.Encode(response)
 		if err != nil {
+			s.debug(err.Error())
 			http.NotFound(w, r)
 			return
 		}

@@ -83,7 +83,7 @@ func main() {
 			request := <-serve.ApproveRequest
 			host := request.Host
 			hostChanMap[host.ID] = request.Chan
-			fmt.Printf("[!] APPROVAL REQUESTED:\nID: %d\nInfo:%s\n", host.ID, host.Info)
+			fmt.Printf("[!] APPROVAL REQUESTED:\nID: %d\nIPAddress: %s\nInfo:\n%s\n", host.ID, host.IPAddress, host.Info)
 			fmt.Print("$> ")
 		}
 	}()
