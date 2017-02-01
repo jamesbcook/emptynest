@@ -96,16 +96,21 @@ func (s *Server) Handle(w http.ResponseWriter, r *http.Request) {
 		http.NotFound(w, r)
 		return
 	}
-	info := parts[:argLength]
+	info := s.HostInfo.String(parts[:argLength])
+
 	host := Host{
 		IPAddress: r.RemoteAddr,
-		Info:      s.HostInfo.String(info),
+		Info:      info,
 	}
 	err = s.DB.Select(q.Eq("Info", info)).First(&host)
 	if len(parts) > argLength {
 		host.Data = string(parts[argLength+1])
 	}
-	s.DB.Save(&host)
+	if host.ID != 0 {
+		s.DB.Update(&host)
+	} else {
+		s.DB.Save(&host)
+	}
 
 	approvalResponseChan := make(chan ApprovalResponse)
 	defer close(approvalResponseChan)
