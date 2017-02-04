@@ -4,7 +4,7 @@ import (
 	"fmt"
 	"strconv"
 
-	"github.com/empty-nest/server"
+	"github.com/empty-nest/emptynest"
 )
 
 func listPayloads() {

@@ -14,9 +14,12 @@ type ApprovalResponse struct {
 
 // TransportConfig ...
 type TransportConfig struct {
+	PluginLocation         string   `toml:"plugin_location"`
 	Addr                   string   `toml:"addr"`
+	ConfigFileLocation     string   `toml:"config_file_location"`
 	EncoderPluginLocations []string `toml:"encoder_plugin_locations"`
 	CryptoPluginLocations  []string `toml:"crypto_plugin_locations"`
+	HostInfoPluginLocation string   `toml:"host_info_plugin_location"`
 	KeyChain               []string `toml:"key_chain"`
 }
 
@@ -39,6 +42,7 @@ type TransportCtx struct {
 // It should implement Start() error, which should
 // start a listener.
 type Transport interface {
+	Name() string
 	Start() error
 	Stop() error
 }
