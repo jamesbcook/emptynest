@@ -9,7 +9,7 @@ type config struct {
 	DBFile                   string   `toml:"db_file"`
 	PayloadPluginDirectories []string `toml:"payload_plugin_directories"`
 	Debug                    bool
-	Transports               []emptynest.TransportConfig
+	Transports               []emptynest.TransportConfig `toml:"transport"`
 }
 
 // decodeConfigFile returns Config by parsing a toml file.

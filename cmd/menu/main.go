@@ -77,6 +77,7 @@ func main() {
 			EncoderChain:        encoderChain,
 			CryptoChain:         cryptoChain,
 			HostInfo:            infoPlugin,
+			KeyChain:            keyChain,
 		})
 		if err != nil {
 			fmt.Println("[!] Error creating transport")
@@ -87,6 +88,7 @@ func main() {
 			fmt.Printf("[+] Starting transport %s on %s\n", tr.Name(), c.Addr)
 			if err := tr.Start(); err != nil {
 				fmt.Printf("[!] Error starting trasnport %s\n", tr.Name())
+				fmt.Printf("%s\n", err.Error())
 				os.Exit(1)
 			}
 		}(transport, trconf)
