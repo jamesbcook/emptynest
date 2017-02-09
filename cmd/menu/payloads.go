@@ -54,7 +54,7 @@ func getPayload(id string) {
 		return
 	}
 	plug := payloadMap[payload.Kind]
-	fmt.Printf("Name: %s Kind: %s Data: %s", payload.Kind, payload.Name, plug.String(payload.Data[1:]))
+	fmt.Printf("Name: %s\nKind: %s\nData: %s\n", payload.Name, payload.Kind, plug.String(payload.Data[1:]))
 
 }
 
