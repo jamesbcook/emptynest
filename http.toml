@@ -1,0 +1,4 @@
+get_location = "query"
+get_param = "JSESSIONID"
+post_location = "body"
+post_param = "data"
