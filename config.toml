@@ -1,0 +1,13 @@
+db_file = "data.db"
+payload_plugin_directories = ["plugins"]
+debug = true
+
+[[transport]]
+plugin_location = "http.so" # plugin location
+addr = ":8000"              # address to listen on
+config_file_location="http.toml" # per transport configuration
+#encoder_plugin_locations = ["base32.so"] # encoding plugins to use
+encoder_plugin_locations = ["hex.so"] # encoding plugins to use
+crypto_plugin_locations = ["rc4.so"] # encryption plugins to use
+host_info_plugin_location = "basic.so" # host to parse and present host information
+key_chain = ["41414141"] # encryption keys in order of plugin
