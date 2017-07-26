@@ -8,7 +8,7 @@ import (
 type config struct {
 	DBFile                   string   `toml:"db_file"`
 	PayloadPluginDirectories []string `toml:"payload_plugin_directories"`
-	Debug                    bool
+	Debug                    bool     `toml:"debug"`
 	Transports               []emptynest.TransportConfig `toml:"transport"`
 }
 
