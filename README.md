@@ -24,6 +24,6 @@ Another goal when developing this project was to enable chainable encryption and
 ```
 encoder_plugin_locations = ["base64.so"] # encoding plugins to use
 crypto_plugin_locations = ["rc4.so", "aes_ctr.so"] # encryption plugins to use
-key_chain = ["AAAA", "6c66524838567039306971486a32595052304b64773358693432334145637636"] # encryption keys in order of plugin
+key_chain = ["41414141", "6c66524838567039306971486a32595052304b64773358693432334145637636"] # encryption keys in order of plugin
 ```
 The possibilities are endless. For example, you could modify RC4 plugin to brute-force an incoming key. You may notice the server plugins provided in the repo do not implemented authenticated encryption, a principal you can read more about [here](https://moxie.org/blog/the-cryptographic-doom-principle/). We did this to keep message lengths to a minimum, again, the idea behind this project was to have minimal functionality and minimal traffic between the server and agent. You can easily modify the encryption plugins or handler itself to validate the message integrity should you feel that is needed.
