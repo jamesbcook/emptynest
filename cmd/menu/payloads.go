@@ -58,6 +58,15 @@ func getPayload(id string) {
 
 }
 
+func payloadsHelp() {
+	fmt.Println(`
+list	List available payloads
+add     Add payload
+del     Delete payload
+get     Get payload information
+`)
+}
+
 func payloads(args []string) {
 	if len(args) < 1 {
 		var payloads []emptynest.Payload
@@ -88,5 +97,8 @@ func payloads(args []string) {
 			return
 		}
 		getPayload(args[1])
+	case "help":
+		payloadsHelp()
+		return
 	}
 }

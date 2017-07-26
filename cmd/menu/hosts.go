@@ -90,6 +90,15 @@ func denyHost(id string) {
 	fmt.Printf("[+] Host %d denied\n", h.ID)
 }
 
+func hostsHelp() {
+	fmt.Println(`
+get	Get list of hosts that have connected
+del     Delete host that have connected
+approve Approve connected host
+deny    Deny connected host
+`)
+}
+
 func hosts(args []string) {
 	if len(args) < 1 {
 		var hosts []emptynest.Host
@@ -127,5 +136,8 @@ func hosts(args []string) {
 			return
 		}
 		denyHost(args[1])
+	case "help":
+		hostsHelp()
+		return
 	}
 }
