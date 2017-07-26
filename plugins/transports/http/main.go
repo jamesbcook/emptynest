@@ -112,12 +112,13 @@ func (s *Server) Handle(w http.ResponseWriter, r *http.Request) {
 		http.NotFound(w, r)
 		return
 	}
-	response, err := approvalResponse.Plugin.Generate(approvalResponse.Payload.Data)
+	generatedPayload, err := approvalResponse.Plugin.Generate(approvalResponse.Payload.Data)
 	if err != nil {
 		s.debug(err.Error())
 		http.NotFound(w, r)
 		return
 	}
+	response := append([]byte{byte(approvalResponse.Plugin.ID())}, generatedPayload...)
 	key = s.Ctx.KeyChain[0]
 	for i := (len(s.Ctx.CryptoChain) - 1); i >= 0; i-- {
 		if len(s.Ctx.KeyChain) == len(s.Ctx.CryptoChain) {
